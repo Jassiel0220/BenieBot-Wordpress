@@ -32,17 +32,26 @@ openBot.addEventListener("click", function () {
     });
   }
 });
-document.addEventListener("DOMContentLoaded", function() {
-const openButton = document.querySelector(".chatbot_icon"); //The chatbot icon is saved as a button
-const botContent = document.querySelector(".disclaimer"); //The iframe where the chatbot is contained
-openButton.addEventListener("click",function(){
-    if (botContent.style.display === "none") {
-        botContent.style.display = "block"; // Show the chat container
+document.addEventListener("DOMContentLoaded", function () {
+  const openButton = document.querySelector(".chatbot_icon");
+  const botContent = document.querySelector(".disclaimer");
+
+  openButton.addEventListener("click", function () {
+    if (agreementCheckbox.checked) {
+      var beniebotContainer = document.querySelector('.beniebot');
+      var beniebotIframe = document.getElementById('beniebotIframe');
+      beniebotIframe.src = "https://topmexico.org/chatbot/beniebot.html";
+      beniebotContainer.style.display = 'block';
+      closeDisclaimer();
     } else {
-        botContent.style.display = "none"; // Hide the chat container
+      if (botContent.style.display === "none") {
+        botContent.style.display = "block";
+      } else {
+        botContent.style.display = "none";
+      }
     }
-})
-})
+  });
+});
 
 
 
