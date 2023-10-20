@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Benie the Bot</title>
+    <style>
+        .feedback {
+            position: fixed;
+            right: 42px;
+            top: 0;
+            margin: 10px;
+            background-color: rgb(0, 104, 170);
+            color: whitesmoke;
+            border: none;
+            border-radius: 0;
+            padding: 5px;
+            font-family: Arial;
+            font-size: 11pt;
+
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            -webkit-font-smoothing: antialiased;
+
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+
+        }
+
+        h1 {
+            font-size: 11pt;
+            font-family: Arial;
+            line-height: 20px;
+            color: whitesmoke;
+            display: table-cell;
+            padding: 13px 0px 0px 20px;
+        }
+
+        .heading {
+            background-color: rgb(0, 104, 170);
+            height: 50px;
+            z-index: 999;
+
+        }
+
+        .main {
+            margin: 18px;
+            border-radius: 4px;
+
+        }
+
+        div[role="form"] {
+            background-color: white;
+        }
+
+        #webchat {
+            position: fixed;
+            height: calc(100% - 50px);
+            width: 100%;
+            top: 50px;
+            overflow: hidden;
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="heading" style="text-align: center;">
+            <img src="chatbot.png" alt="Benie the Bot Image" style="height: 100%; width: auto; display: inline-block;">
+
+            <!-- Change the h1 text to change the bot name -->
+            <h1></h1>
+            <a href="#" id="sendMessageButton" class="feedback">Feedback</a>
+        </div>
+        <div id="webchat" role="main"></div>
+    </div>
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <script>
+        const sendMessageButton = document.getElementById('sendMessageButton');
+
+
+
+        sendMessageButton.addEventListener('click', () => {
+
+            const messageToSend = {
+
+                type: 'message',
+
+                text: 'Feedback',
+
+            };
+
+
+
+            store.dispatch({
+
+                type: 'WEB_CHAT/SEND_MESSAGE',
+
+                payload: messageToSend,
+
+            });
+
+        });
+        const styleOptions = {
+            // Add styleOptions to customize web chat canvas
+            hideUploadButton: true,
+            botAvatarInitials: 'BT',
+            accent: '#00809d',
+            botAvatarBackgroundColor: "#FFFFFF",
+            botAvatarImage: 'chatbot.png',
+            bubbleBackground: '#dfdfdf',
+            bubbleFromUserBackground: '#0068aa',
+            bubbleBorderRadius: 10,
+            bubbleFromUserBorderRadius: 10,
+            bubbleFromUserTextColor: '#ffffff',
+        };
+        // Add your BOT ID below
+        var BOT_ID = "";
+
+        var theURL = "https://fbfee4b2372cec619558823907a8dd.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/iac_calHRBenefitsBot/directline/token?api-version=2022-03-01-preview";
+
+        const store = window.WebChat.createStore(
+            {},
+            ({ dispatch }) => next => action => {
+                if (action.type === "DIRECT_LINE/CONNECT_FULFILLED") {
+                    dispatch({
+                        meta: {
+                            method: "keyboard",
+                        },
+                        payload: {
+                            activity: {
+                                channelData: {
+                                    postBack: true,
+                                },
+                                //Web Chat will show the 'Greeting' System Topic message which has a trigger-phrase 'hello'
+                                name: 'startConversation',
+                                type: "event"
+                            },
+                        },
+                        type: "DIRECT_LINE/POST_ACTIVITY",
+                    });
+                }
+                return next(action);
+            }
+        );
+        fetch(theURL)
+            .then(response => response.json())
+            .then(conversationInfo => {
+                window.WebChat.renderWebChat(
+                    {
+                        directLine: window.WebChat.createDirectLine({
+                            token: conversationInfo.token,
+                        }),
+                        store: store,
+                        styleOptions: styleOptions
+                    },
+                    document.getElementById('webchat')
+                );
+            })
+            .catch(err => console.error("An error occurred: " + err));
+    </script>
+</body>
+
+</html>
