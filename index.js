@@ -36,11 +36,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const openButton = document.querySelector(".chatbot_icon");
   const botContent = document.querySelector(".disclaimer");
 
+  window.onload = function() {
+    if (getCookie("agreement") === "true") {
+      agreementCheckbox.checked = true;
+    }
+  };
+  
   openButton.addEventListener("click", function () {
     if (agreementCheckbox.checked) {
       var beniebotContainer = document.querySelector('.beniebot');
       var beniebotIframe = document.getElementById('beniebotIframe');
       beniebotIframe.src = "https://topmexico.org/chatbot/beniebot.html";
+      document.cookie = "username=Employee; path=/";
+      document.cookie = "agreement=true;"; // Establece la cookie de acuerdo
       beniebotContainer.style.display = 'block';
       closeDisclaimer();
     } else {
@@ -51,6 +59,13 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   });
+  
+  // Función para obtener el valor de la cookie por su nombre
+  function getCookie(name) {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  }
 });
 
 
