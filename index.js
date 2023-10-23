@@ -7,6 +7,13 @@ function closeBenieBot() {
   }
 }
 
+function refresh() {
+  var beniebotContainer = document.querySelector('.beniebot');
+  var beniebotIframe = document.getElementById('beniebotIframe');
+  beniebotIframe.src = "chatbot/beniebot.html";
+  beniebotContainer.style.display = 'block';
+}
+
 function closeDisclaimer() {
   const disclaimer = document.querySelector(".disclaimer");
   if (disclaimer) {

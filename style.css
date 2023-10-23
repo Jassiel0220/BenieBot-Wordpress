@@ -33,6 +33,18 @@ body {
     margin: 0;
 }
 
+.refresh {
+    font-size: 20px;
+    position: absolute;
+    top: 2px;
+    right: 25px;
+    border: none;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    margin: 0;
+}
+
 .styleButton {
     height: 40px;
     width: 150px;
