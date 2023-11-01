@@ -1,3 +1,4 @@
+//This code hides a virtual assistant container and resets its iframe.
 function closeBenieBot() {
   var beniebotDiv = document.querySelector('.beniebot');
   beniebotDiv.style.display = 'none';
@@ -64,7 +65,7 @@ function getCookie(name) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  //Add your custom domain
+  //Add your const domain
   const domain = "";
   if (window.location.hostname.endsWith(domain)) {
     const openButton = document.querySelector(".chatbot_icon");
