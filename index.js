@@ -13,7 +13,7 @@ function refresh() {
   var beniebotContainer = document.querySelector('.beniebot');
   var beniebotIframe = document.getElementById('beniebotIframe');
   //reference for coustum benie bot 
-  beniebotIframe.src = "/beniebot.html";
+  beniebotIframe.src = "beniebot.html";
   beniebotContainer.style.display = 'block';
 }
 
@@ -28,6 +28,7 @@ const openBot = document.getElementById("openNewWindow");
 const agreementCheckbox = document.getElementById("agreementCheckbox");
 const errorSpan = document.getElementById("js-chatbot-error");
 
+// The code ensures that, on page load, a specific checkbox is checked if a cookie called "agreement" was previously saved with the value "true".
 document.addEventListener("DOMContentLoaded", function () {
   const agreementCheckbox = document.getElementById("agreementCheckbox");
   if (getCookie("agreement") === "true") {
@@ -40,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// When you click "openBot", it displays a "beniebot" if the box is checked, sets cookies, and handles errors if the terms are not accepted.
 openBot.addEventListener("click", function () {
   if (agreementCheckbox.checked) {
     var beniebotContainer = document.querySelector('.beniebot');
