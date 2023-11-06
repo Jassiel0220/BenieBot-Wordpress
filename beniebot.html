@@ -6,10 +6,9 @@
     <style>
         .feedback {
             position: fixed;
-            right: 42px;
+            left: 30px;
             top: 0;
             margin: 10px;
-            background-color: rgb(0, 104, 170);
             color: whitesmoke;
             border: none;
             border-radius: 0;
@@ -74,7 +73,6 @@
     <div>
         <div class="heading" style="text-align: center;">
             <img src="chatbot.png" alt="Benie the Bot Image" style="height: 100%; width: auto; display: inline-block;">
-
             <!-- Change the h1 text to change the bot name -->
             <h1></h1>
             <a href="#" id="sendMessageButton" class="feedback">Feedback</a>
@@ -84,6 +82,7 @@
     <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
     <script>
         const sendMessageButton = document.getElementById('sendMessageButton');
+
 
 
 
@@ -124,7 +123,7 @@
         // Add your BOT ID below
         var BOT_ID = "";
 
-        var theURL = "https://fbfee4b2372cec619558823907a8dd.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/iac_calHRBenefitsBot/directline/token?api-version=2022-03-01-preview";
+        var theURL = "https://82b648e44409e0c6bed37ec68e0d618.e.environment.api.gov.powerplatform.microsoft.us/powervirtualagents/botsbyschema/iac_calHRBenefitsBot/directline/token?api-version=2022-03-01-preview";
 
         const store = window.WebChat.createStore(
             {},

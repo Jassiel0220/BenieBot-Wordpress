@@ -6,6 +6,12 @@ function closeBenieBot() {
     iframe.src = 'about:blank';
   }
 }
+function refresh() {
+  var beniebotContainer = document.querySelector('.beniebot');
+  var beniebotIframe = document.getElementById('beniebotIframe');
+  beniebotIframe.src = "https://calhr.benefitsprograms.info/chatbot/beniebot.html";
+  beniebotContainer.style.display = 'block';
+}
 
 function closeDisclaimer() {
   const disclaimer = document.querySelector(".disclaimer");
@@ -22,8 +28,12 @@ openBot.addEventListener("click", function () {
   if (agreementCheckbox.checked) {
     var beniebotContainer = document.querySelector('.beniebot');
     var beniebotIframe = document.getElementById('beniebotIframe');
-    beniebotIframe.src = "beniebot.html";
+    beniebotIframe.src = "https://calhr.benefitsprograms.info/chatbot/beniebot.html";
     beniebotContainer.style.display = 'block';
+    var expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 1);
+    document.cookie = "username=Employee; path=/; expires=" + expirationDate.toUTCString();
+    document.cookie = "agreement=true; path=/; expires=" + expirationDate.toUTCString();
     closeDisclaimer();
   } else {
     errorSpan.textContent = "You must agree to the disclaimers to activate the Virtual Assistant.";
@@ -32,26 +42,40 @@ openBot.addEventListener("click", function () {
     });
   }
 });
-document.addEventListener("DOMContentLoaded", function () {
-  const openButton = document.querySelector(".chatbot_icon");
-  const botContent = document.querySelector(".disclaimer");
+function getCookie(name) {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
 
-  openButton.addEventListener("click", function () {
-    if (agreementCheckbox.checked) {
-      var beniebotContainer = document.querySelector('.beniebot');
-      var beniebotIframe = document.getElementById('beniebotIframe');
-      beniebotIframe.src = "https://topmexico.org/chatbot/beniebot.html";
-      beniebotContainer.style.display = 'block';
-      closeDisclaimer();
-    } else {
-      if (botContent.style.display === "none") {
-        botContent.style.display = "block";
+document.addEventListener("DOMContentLoaded", function () {
+  const domain = "calhr.benefitsprograms.info";
+  if (window.location.hostname.endsWith(domain)) {
+    const openButton = document.querySelector(".chatbot_icon");
+    const botContent = document.querySelector(".disclaimer");
+    const agreementCheckbox = document.getElementById("agreementCheckbox");
+
+    openButton.addEventListener("click", function () {
+      if (agreementCheckbox.checked) {
+        var beniebotContainer = document.querySelector('.beniebot');
+        var beniebotIframe = document.getElementById('beniebotIframe');
+        beniebotIframe.src = "https://" + domain + "/chatbot/beniebot.html";
+        beniebotContainer.style.display = 'block';
+        closeDisclaimer();
       } else {
-        botContent.style.display = "none";
+        if (getCookie("agreement") !== "true") {
+          if (botContent.style.display === "none") {
+            botContent.style.display = "block";
+          } else {
+            botContent.style.display = "none";
+          }
+        }
       }
-    }
-  });
+    });
+  }
 });
+
+
 
 
 
