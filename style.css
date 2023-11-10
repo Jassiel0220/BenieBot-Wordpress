@@ -13,7 +13,7 @@ body {
     font-size: 30px;
     position: absolute;
     top: 5px;
-    right: 5px;
+    right: 1px;
     border: none;
     background-color: transparent;
     color: white;
@@ -21,18 +21,24 @@ body {
     margin: 0;
 }
 
-.closingbutton2 {
-    font-size: 20px;
-    position: absolute;
-    top: 2px;
-    right: 5px;
-    border: none;
-    background-color: transparent;
-    color: white;
-    cursor: pointer;
-    margin: 0;
-}
 
+.options_buttons{
+    justify-content: center;
+    color: white;
+    display: flex;
+    height: 50px; 
+    width: 80px; 
+    position: absolute; 
+    right: 0px
+}
+.set_buttons {
+    border: none;
+    font-size: 22px;
+    margin:5px;
+    cursor: pointer;
+    color: white;
+    background-color: transparent;
+}
 .styleButton {
     height: 40px;
     width: 150px;
@@ -51,7 +57,6 @@ body {
 }
 
 .chatbot_icon {
-    background-color: #0068aa;
     margin-left: auto;
     text-align: center;
     border-color: white;
@@ -70,13 +75,11 @@ body {
 }
 
 .chatbot_icon:hover {
-    background-color: #0068aa;
     transform: scale(1.1);
 }
 
 .disclaimer {
     display: none;
-    overflow: auto;
     width: 50%;
     max-width: 60%;
     height: 60%;
@@ -92,6 +95,7 @@ body {
     flex-direction: column;
     align-items: center;
     z-index: 999;
+    overflow: auto;
 
 }
 
@@ -133,14 +137,23 @@ body {
         margin: 5%;
         right: 0%;
     }
-    .refresh {
-        font-size: 30px;
-        position: absolute;
-        top: 1px;
-        right: 28px;
-    }
     .closingbutton2 {
+    font-size: 30px;
+    position: absolute;
+    right: 1px;
+    top: 4px;
+}
+.refresh {
+    right: 60px;
+    color: whitesmoke;
+    border: none;
+    border-radius: 0;
+    padding: 1px;
+    font-family: Arial;
     font-size: 25px;
+    text-decoration: none;
+    margin: -7px;
+    top: 12px;
 }
 }
 

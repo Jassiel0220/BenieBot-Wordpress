@@ -6,25 +6,36 @@
     <style>
         .feedback {
             position: fixed;
-            right: 42px;
+            left: 100px;
             top: 0;
             margin: 10px;
-            background-color: rgb(0, 104, 170);
             color: whitesmoke;
             border: none;
             border-radius: 0;
             padding: 5px;
             font-family: Arial;
             font-size: 11pt;
-
+        }
+        .second_page {
+            position: fixed;
+            left: 0px;
+            top: 0;
+            margin: 10px;
+            color: whitesmoke;
+            border: none;
+            border-radius: 0;
+            padding: 5px;
+            font-family: Arial;
+            font-size: 11pt;
         }
 
+        
         html,
         body {
             height: 100%;
             width: 100%;
             -webkit-font-smoothing: antialiased;
-
+            font-size: 17px;
         }
 
         body {
@@ -78,35 +89,25 @@
             <!-- Change the h1 text to change the bot name -->
             <h1></h1>
             <a href="#" id="sendMessageButton" class="feedback">Feedback</a>
+            <a href="second_page.html" class="second_page" target="_blank">Second Page</a>
         </div>
         <div id="webchat" role="main"></div>
     </div>
     <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
     <script>
+        
+
+
         const sendMessageButton = document.getElementById('sendMessageButton');
-
-
-
         sendMessageButton.addEventListener('click', () => {
-
             const messageToSend = {
-
                 type: 'message',
-
                 text: 'Feedback',
-
             };
-
-
-
             store.dispatch({
-
                 type: 'WEB_CHAT/SEND_MESSAGE',
-
                 payload: messageToSend,
-
             });
-
         });
         const styleOptions = {
             // Add styleOptions to customize web chat canvas
@@ -119,13 +120,11 @@
             bubbleFromUserBackground: '#0068aa',
             bubbleBorderRadius: 10,
             bubbleFromUserBorderRadius: 10,
+            bubbleTextStyle: 9,
             bubbleFromUserTextColor: '#ffffff',
         };
         // Add your BOT ID below
-        var BOT_ID = "";
-
         var theURL = "https://fbfee4b2372cec619558823907a8dd.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/iac_calHRBenefitsBot/directline/token?api-version=2022-03-01-preview";
-
         const store = window.WebChat.createStore(
             {},
             ({ dispatch }) => next => action => {
