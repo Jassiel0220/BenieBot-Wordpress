@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Benie the Bot</title>
     <style>
@@ -79,8 +78,8 @@
             z-index: 999;
         }
     </style>
-</head>
 
+</head>
 <body>
     <div>
         <div class="heading" style="text-align: center;">
@@ -92,23 +91,9 @@
             <a href="second_page.html" class="second_page" target="_blank">Second Page</a>
         </div>
         <div id="webchat" role="main"></div>
-    </div>
-    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    </div>    
+
     <script>
-        
-
-
-        const sendMessageButton = document.getElementById('sendMessageButton');
-        sendMessageButton.addEventListener('click', () => {
-            const messageToSend = {
-                type: 'message',
-                text: 'Feedback',
-            };
-            store.dispatch({
-                type: 'WEB_CHAT/SEND_MESSAGE',
-                payload: messageToSend,
-            });
-        });
         const styleOptions = {
             // Add styleOptions to customize web chat canvas
             hideUploadButton: true,
@@ -123,48 +108,86 @@
             bubbleTextStyle: 9,
             bubbleFromUserTextColor: '#ffffff',
         };
-        // Add your BOT ID below
-        var theURL = "https://fbfee4b2372cec619558823907a8dd.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/iac_calHRBenefitsBot/directline/token?api-version=2022-03-01-preview";
-        const store = window.WebChat.createStore(
-            {},
-            ({ dispatch }) => next => action => {
-                if (action.type === "DIRECT_LINE/CONNECT_FULFILLED") {
-                    dispatch({
-                        meta: {
-                            method: "keyboard",
-                        },
-                        payload: {
-                            activity: {
-                                channelData: {
-                                    postBack: true,
-                                },
-                                //Web Chat will show the 'Greeting' System Topic message which has a trigger-phrase 'hello'
-                                name: 'startConversation',
-                                type: "event"
-                            },
-                        },
-                        type: "DIRECT_LINE/POST_ACTIVITY",
-                    });
-                }
-                return next(action);
-            }
-        );
-        fetch(theURL)
-            .then(response => response.json())
-            .then(conversationInfo => {
+
+        const theURL = "https://fbfee4b2372cec619558823907a8dd.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/iac_calHRBenefitsBot/directline/token?api-version=2022-03-01-preview";
+
+        var environmentEndPoint = theURL.slice(0, theURL.indexOf('/powervirtualagents'));
+        console.log(environmentEndPoint)
+        var apiVersion = theURL.slice(theURL.indexOf('api-version')).split('=')[1];
+        console.log(apiVersion)
+        var regionalChannelSettingsURL = `${environmentEndPoint}/powervirtualagents/regionalchannelsettings?api-version=${apiVersion}`;
+        console.log(regionalChannelSettingsURL);
+        var directlineBaseUrl;
+
+        fetch(regionalChannelSettingsURL)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                directlineBaseUrl = data.channelUrlsById.directline;
+            })
+            .catch(err => console.error("An error occurred: " + err));
+
+        // Agrega un evento onload al script de Web Chat
+        const webChatScript = document.createElement('script');
+        webChatScript.onload = function () {
+            // Obtén la información del localStorage
+            const localStorageKey = 'webChatData';
+            const localStorageData = localStorage.getItem(localStorageKey);
+            const sessionData = localStorageData ? JSON.parse(localStorageData) : null;
+
+            if (sessionData) {
+                // Si hay datos en el localStorage, utiliza esos datos para renderizar el componente de chat
+                const directLineUrl = `${directlineBaseUrl}v3/directline`;
+
                 window.WebChat.renderWebChat(
                     {
                         directLine: window.WebChat.createDirectLine({
-                            token: conversationInfo.token,
+                            domain: directLineUrl,
+                            token: sessionData['powerva.demoClient.dltoken'].token,
                         }),
-                        store: store,
-                        styleOptions: styleOptions
+                        styleOptions
                     },
                     document.getElementById('webchat')
                 );
-            })
-            .catch(err => console.error("An error occurred: " + err));
-    </script>
-</body>
+            } else {
+                // Si no hay datos en el localStorage, realiza la lógica de obtener nuevos datos como lo hacías antes
+                fetch(theURL)
+                    .then(response => response.json())
+                    .then(conversationInfo => {
+                        // Almacena el token y otros datos en localStorage con el nombre de clave personalizado
+                        const newSessionData = {
+                            'powerva.demoClient.dltoken': {
+                                token: conversationInfo.token,
+                                conversationId: conversationInfo.conversationId,
+                                expiresAt: conversationInfo.expiresAt,
+                                expiresIn: conversationInfo.expires_in,
+                                additionalExpiresAt: 1700771234267
+                            }
+                        };
 
+                        localStorage.setItem(localStorageKey, JSON.stringify(newSessionData));
+
+                        const directLineUrl = `${directlineBaseUrl}v3/directline`;
+
+                        window.WebChat.renderWebChat(
+                            {
+                                directLine: window.WebChat.createDirectLine({
+                                    domain: directLineUrl,
+                                    token: conversationInfo.token,
+                                }),
+                                styleOptions
+                            },
+                            document.getElementById('webchat')
+                        );
+                    })
+                    .catch(err => console.error("An error occurred: " + err));
+            }
+        };
+
+        webChatScript.src = "https://cdn.botframework.com/botframework-webchat/latest/webchat.js";
+        document.head.appendChild(webChatScript);
+    </script>
+
+</body>
 </html>
