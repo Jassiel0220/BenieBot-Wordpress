@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta http-equiv="Cache-Control" content="no-store" />
     <title>Benie the Bot</title>
     <style>
         .feedback {
@@ -15,6 +17,7 @@
             font-family: Arial;
             font-size: 11pt;
         }
+
         .second_page {
             position: fixed;
             left: 0px;
@@ -28,7 +31,7 @@
             font-size: 11pt;
         }
 
-        
+
         html,
         body {
             height: 100%;
@@ -80,6 +83,7 @@
     </style>
 
 </head>
+
 <body>
     <div>
         <div class="heading" style="text-align: center;">
@@ -91,11 +95,11 @@
             <a href="second_page.html" class="second_page" target="_blank">Second Page</a>
         </div>
         <div id="webchat" role="main"></div>
-    </div>    
+    </div>
 
     <script>
         const styleOptions = {
-            // Add styleOptions to customize web chat canvas
+            // Agrega styleOptions para personalizar el canvas de web chat
             hideUploadButton: true,
             botAvatarInitials: 'BT',
             accent: '#00809d',
@@ -109,85 +113,111 @@
             bubbleFromUserTextColor: '#ffffff',
         };
 
-        const theURL = "https://fbfee4b2372cec619558823907a8dd.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/iac_calHRBenefitsBot/directline/token?api-version=2022-03-01-preview";
+        // URL del servicio de Power Virtual Agents
+        var theURL = "https://fbfee4b2372cec619558823907a8dd.1a.environment.api.powerplatform.com/powervirtualagents/botsbyschema/iac_calHRBenefitsBot/directline/token?api-version=2022-03-01-preview";
 
+        // Obtener el endpoint del entorno y la versión de la API
         var environmentEndPoint = theURL.slice(0, theURL.indexOf('/powervirtualagents'));
-        console.log(environmentEndPoint)
         var apiVersion = theURL.slice(theURL.indexOf('api-version')).split('=')[1];
-        console.log(apiVersion)
         var regionalChannelSettingsURL = `${environmentEndPoint}/powervirtualagents/regionalchannelsettings?api-version=${apiVersion}`;
-        console.log(regionalChannelSettingsURL);
         var directlineBaseUrl;
 
+        // Fetch directline base URL
         fetch(regionalChannelSettingsURL)
-            .then((response) => {
-                return response.json();
-            })
+            .then((response) => response.json())
             .then((data) => {
                 directlineBaseUrl = data.channelUrlsById.directline;
+
+                // Inicializar el componente Web Chat
+                initializeWebChat(directlineBaseUrl);
             })
             .catch(err => console.error("An error occurred: " + err));
 
-        // Agrega un evento onload al script de Web Chat
-        const webChatScript = document.createElement('script');
-        webChatScript.onload = function () {
-            // Obtén la información del localStorage
+        function initializeWebChat(directlineBaseUrl) {
             const localStorageKey = 'webChatData';
             const localStorageData = localStorage.getItem(localStorageKey);
             const sessionData = localStorageData ? JSON.parse(localStorageData) : null;
 
-            if (sessionData) {
-                // Si hay datos en el localStorage, utiliza esos datos para renderizar el componente de chat
-                const directLineUrl = `${directlineBaseUrl}v3/directline`;
+            if (window.WebChat && window.WebChat.renderWebChat) {
+                if (sessionData) {
+                    // Usar datos del localStorage para renderizar el componente de chat
+                    const directLineUrl = `${directlineBaseUrl}v3/directline`;
 
-                window.WebChat.renderWebChat(
-                    {
-                        directLine: window.WebChat.createDirectLine({
-                            domain: directLineUrl,
-                            token: sessionData['powerva.demoClient.dltoken'].token,
-                        }),
-                        styleOptions
-                    },
-                    document.getElementById('webchat')
-                );
-            } else {
-                // Si no hay datos en el localStorage, realiza la lógica de obtener nuevos datos como lo hacías antes
-                fetch(theURL)
-                    .then(response => response.json())
-                    .then(conversationInfo => {
-                        // Almacena el token y otros datos en localStorage con el nombre de clave personalizado
-                        const newSessionData = {
-                            'powerva.demoClient.dltoken': {
-                                token: conversationInfo.token,
-                                conversationId: conversationInfo.conversationId,
-                                expiresAt: conversationInfo.expiresAt,
-                                expiresIn: conversationInfo.expires_in,
-                                additionalExpiresAt: 1700771234267
-                            }
-                        };
-
-                        localStorage.setItem(localStorageKey, JSON.stringify(newSessionData));
-
-                        const directLineUrl = `${directlineBaseUrl}v3/directline`;
-
-                        window.WebChat.renderWebChat(
-                            {
-                                directLine: window.WebChat.createDirectLine({
-                                    domain: directLineUrl,
+                    window.WebChat.renderWebChat(
+                        {
+                            directLine: window.WebChat.createDirectLine({
+                                domain: directLineUrl,
+                                token: sessionData['powerva.demoClient.dltoken'].token,
+                            }),
+                            styleOptions
+                        },
+                        document.getElementById('webchat')
+                    );
+                } else {
+                    // Fetch nuevo token y renderizar el componente de chat
+                    fetch(theURL)
+                        .then(response => response.json())
+                        .then(conversationInfo => {
+                            const newSessionData = {
+                                'powerva.demoClient.dltoken': {
                                     token: conversationInfo.token,
-                                }),
-                                styleOptions
-                            },
-                            document.getElementById('webchat')
-                        );
-                    })
-                    .catch(err => console.error("An error occurred: " + err));
+                                    conversationId: conversationInfo.conversationId,
+                                    expiresAt: conversationInfo.expiresAt,
+                                    expiresIn: conversationInfo.expires_in,
+                                    additionalExpiresAt: 1700771234267
+                                }
+                            };
+
+                            const store = window.WebChat.createStore(
+                                {},
+                                ({ dispatch }) => next => action => {
+
+                                if (action.type === "DIRECT_LINE/CONNECT_FULFILLED") {
+                                    dispatch({
+                                        meta: {
+                                            method: "keyboard",
+                                        },
+                                        payload: {
+                                            activity: {
+                                                channelData: {
+                                                    postBack: true,
+                                                },
+                                                //Web Chat will show the 'Greeting' System Topic message which has a trigger-phrase 'hello'
+                                                name: 'startConversation',
+                                                type: "event"
+                                            },
+                                        },
+                                        type: "DIRECT_LINE/POST_ACTIVITY",
+                                    });
+                                }
+                                return next(action);
+                            }
+                            );
+
+                            localStorage.setItem(localStorageKey, JSON.stringify(newSessionData));
+
+                            const directLineUrl = `${directlineBaseUrl}v3/directline`;
+
+                            window.WebChat.renderWebChat(
+                                {
+                                    directLine: window.WebChat.createDirectLine({
+                                        domain: directLineUrl,
+                                        token: conversationInfo.token,
+                                    }),
+                                    styleOptions,
+                                    store: store
+                                },
+                                document.getElementById('webchat')
+                            );
+                        })
+                        .catch(err => console.error("An error occurred: " + err));
+                }
+            } else {
+                console.error("WebChat script not fully loaded or initialized.");
             }
-        };
-
-        webChatScript.src = "https://cdn.botframework.com/botframework-webchat/latest/webchat.js";
-        document.head.appendChild(webChatScript);
+        }
     </script>
-
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
 </body>
+
 </html>
