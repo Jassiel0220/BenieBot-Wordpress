@@ -24,6 +24,7 @@ body {
 .closingbutton2 {
     font-size: 30px;
     position: absolute;
+    top: 4px;
     right: 5px;
     border: none;
     background-color: transparent;
@@ -237,4 +238,3 @@ body {
         transform: scale(1);
     }
 }
-
